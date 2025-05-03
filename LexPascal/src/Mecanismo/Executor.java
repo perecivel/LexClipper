@@ -15,8 +15,9 @@ public class Executor {
     private final String captureNumbers = "(?<!\\w)(?:-?\\d+(?:\\.\\d+)?)(?!\\w)";
     private final String captureLiteral = "'(?:[^']|'')*'";
     private final String captureWords   = "\\w+";
-    private final String captureCharacters = "(?::=|>=|<=|<>|>|<|=|\\+|\\-|\\*|\\/|[:;,.()\\[\\]{}])";
+    private final String captureCharacters = "(?::=|>=|<=|<>|>|<|=|\\+|\\-|\\*|\\|[:;,.()\\[\\]{}])";
     private final String captureIdentifier = "^[A-Za-z][A-Za-z0-9_]*$";
+    private final String[] pascalKeywords = {"program", "begin", "end", "var", "const", "type", "procedure", "function", "if", "then", "else", "while", "do", "for", "to", "downto", "repeat", "until", "case", "of", "write", "writeln", "read", "readln"};
     private String capture;
 
     private BufferedReader reader;
@@ -61,6 +62,15 @@ public class Executor {
         Matcher matcher = pattern.matcher(valor);
         if (matcher.find() == true){
             return true;
+        }
+        return false;
+    }
+
+    private boolean IsKeyword(String valor) {  // Nesse caso, nao da pra usar pattern e matcher, pois ao inves de um Regex, esta sendo utilizado um vetor,
+        for (String keyword : pascalKeywords) {//sendo assim, o .compile nao funciona, e consequentemente o matcher tambem nao.
+            if (keyword.equals(valor)) {       //Acredito que nao seja a melhor forma para checar se é uma KeyWord ou nao, porem como a lista de palavras reservadas usadas foram poucas, nao há problema
+                return true;
+            }
         }
         return false;
     }
@@ -160,10 +170,77 @@ public class Executor {
         //1 - Precisa da Tabela de Simbolos do programa.
         //2 - Precisa da Tabela de Simbolos da linguagem.
         //3 - Precisa varrer o buffer secundário, para localizar os tokens, definindo o que é cada um dos lexemas.
+        this.tabelaSimbolosPrograma = new HashMap<>();
+        
+        for (String texto : this.bufferSecundario) {
+            Token token = new Token();
+
+            if (IsKeyword(texto)) { //Adicionado a funcao IsKeyword, pois as palavras reservadas estavam sendo classificadas como Literal e as Caracteres
+                String tipo = "Palavra Reservada";
+                token.setToken(texto);
+                token.setLexema(texto);
+                token.setTipo(tipo);
+                token.setDescricao(tipo);
+                
+                this.tabelaSimbolosPrograma.put(texto, token);
+                
+            }
+
+            
+            else if (IsCharacter(texto)) {
+                String tipo = "Caractere";
+                token.setToken(texto);
+                token.setLexema(texto);
+                token.setTipo(tipo);
+                token.setDescricao(tipo);
+                
+                this.tabelaSimbolosPrograma.put(texto, token);
+                
+            }
+            else if (IsLiteral(texto)) {
+                String tipo = "Literal";
+                token.setToken(texto);
+                token.setLexema(texto);
+                token.setTipo(tipo);
+                token.setDescricao(tipo);
+
+                this.tabelaSimbolosPrograma.put(texto, token);
+                
+            }
+
+            else if (IsIdentifier(texto)) {
+                String tipo = "Identificador";
+                token.setToken(texto);
+                token.setLexema(texto);
+                token.setTipo(tipo);
+                token.setDescricao(tipo);
+
+                this.tabelaSimbolosPrograma.put(texto, token);
+                
+            }
+
+            else if (IsNumber(texto)) {
+                String tipo = "Numero";
+                token.setToken(texto);
+                token.setLexema(texto);
+                token.setTipo(tipo);
+                token.setDescricao(tipo);
+
+                this.tabelaSimbolosPrograma.put(texto, token);
+            }
+        }
     }
 
     public void ImprimirTabelaSimbolosPrograma(){
         //A parte final, na qual vc imprime todas as entradas da Tabela de Simbolos do programa, após o processamento.
+        System.out.println("----------------------------------------");
+        System.out.println("##### Conteúdo da Tabela de Simbolos: #####");
+        for (String chave : this.tabelaSimbolosPrograma.keySet()) {
+            Token token = this.tabelaSimbolosPrograma.get(chave);
+            System.out.println(token.toString());
+            System.out.println('\n');
+        }
+        System.out.println("----------------------------------------");
     }
 
 }
