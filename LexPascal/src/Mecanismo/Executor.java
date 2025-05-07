@@ -171,19 +171,20 @@ public class Executor {
         //2 - Precisa da Tabela de Simbolos da linguagem.
         //3 - Precisa varrer o buffer secundário, para localizar os tokens, definindo o que é cada um dos lexemas.
         this.tabelaSimbolosPrograma = new HashMap<>();
+        int endereço = 0;
         
         for (String texto : this.bufferSecundario) {
             Token token = new Token();
-
             if (IsKeyword(texto)) { //Adicionado a funcao IsKeyword, pois as palavras reservadas estavam sendo classificadas como Literal e as Caracteres
                 String tipo = "Palavra Reservada";
                 token.setToken(texto);
                 token.setLexema(texto);
                 token.setTipo(tipo);
                 token.setDescricao(tipo);
-                
+                token.setEndereco(endereço);
+                endereço++;
+
                 this.tabelaSimbolosPrograma.put(texto, token);
-                
             }
 
             
@@ -193,9 +194,10 @@ public class Executor {
                 token.setLexema(texto);
                 token.setTipo(tipo);
                 token.setDescricao(tipo);
-                
-                this.tabelaSimbolosPrograma.put(texto, token);
-                
+                token.setEndereco(endereço);
+                endereço++;
+
+                this.tabelaSimbolosPrograma.put(texto, token);   
             }
             else if (IsLiteral(texto)) {
                 String tipo = "Literal";
@@ -203,9 +205,10 @@ public class Executor {
                 token.setLexema(texto);
                 token.setTipo(tipo);
                 token.setDescricao(tipo);
+                token.setEndereco(endereço);
+                endereço++;
 
                 this.tabelaSimbolosPrograma.put(texto, token);
-                
             }
 
             else if (IsIdentifier(texto)) {
@@ -214,9 +217,10 @@ public class Executor {
                 token.setLexema(texto);
                 token.setTipo(tipo);
                 token.setDescricao(tipo);
+                token.setEndereco(endereço);
+                endereço++;
 
                 this.tabelaSimbolosPrograma.put(texto, token);
-                
             }
 
             else if (IsNumber(texto)) {
@@ -225,6 +229,8 @@ public class Executor {
                 token.setLexema(texto);
                 token.setTipo(tipo);
                 token.setDescricao(tipo);
+                token.setEndereco(endereço);
+                endereço++;
 
                 this.tabelaSimbolosPrograma.put(texto, token);
             }
